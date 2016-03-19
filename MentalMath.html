@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<title>Mental Math practice</title>
+
+<script src="myScript.js"></script>
+<link rel="stylesheet" type="text/css" href="appStyle.css"/>
+
+<body onload="randomFunction();hideAnswerAndRefreshButton()">
+
+    <div class="questionBox">
+
+        <p>Practice exercise:</p>
+        <form name="exercises">
+        <select name="chooseExercise" onchange="hideAnswerAndRefreshButton();randomFunction()">
+            <option value="0">shuffle all</option>
+            <option value="1">2-by-2 addition</option>
+            <option value="2">3-by-3 addition</option>
+            <option value="3">4-by-3 addition</option>
+            <option value="4">2-by-2 subtraction</option>
+            <option value="5">3-by-3 subtraction</option>
+            <option value="6">4-by-3 subtraction</option>
+            <option value="7">2-by-1 multiplication</option>
+            <option value="8">3-by-1 multiplication</option>
+            <option value="9">2-digit squares</option>
+            </select>
+        </form>
+
+        <div id="verticalSpaceWrapper">
+            <div class="calculations">
+                <p id="var1"> </p>
+                <p id="operator"></p>
+                <p id="var2"> </p>
+                <p>=</p>
+                <p id="answer">answer</p>
+                <p id="counter" onclick="resetCounter()">(0)</p>
+            </div>
+        </div>
+
+        <button id="refresh" class="mainButton" onclick="hideAnswerAndRefreshButton();randomFunction()">refresh</button>
+        <button id="showAnswer" class="mainButton" onclick="showAnswerAndRefreshButton();count()">reveal answer</button>
+        <button id="questionButton" onclick="helpMe()">?</button>
+    </div>
+
+
+</body>
+
+</html>
+
+
+<!--
+    0) get calculation inline DONE
+    1) create next function DONE
+    2) get random switch working DONE
+    2b) continue in intellij DONE
+    3) refactor functions to avoid repeating code
+    3) add checkbox selectors DONE
+    3b)refactor buttons into one for refresh/reveal DONE
+    3c) comment out/remove current exercise prompt - think about where its going to go eventually! DONE
+    4) get mental math learning files
+    5) add progression in actual order
+    create minimum values for e.g. 3-by-3
+    add parameters to sum engine to reduce about of code
+
+6) continue when decide to actually make app
+
+edit launcher to put app on bottom right
+minimise appearance of 4-by-3s?
+change pointer for counter hover
+add support for space bar/return key
+fix loading flicker issue/hideshow button correct?
+re-add negatives?
+-->
