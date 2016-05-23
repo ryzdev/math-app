@@ -6,13 +6,14 @@
 <script src="angular.js"></script>
 <script src="scripts.js"></script>
 
-<body ng-controller="mmAppController" ng-init="randomFunction();hideAnswerAndRefreshButton()" >
+<body ng-controller="mmAppController">
 
     <div class="questionBox">
 
-        <p>Practice exercise:</p>
+        <div class="main-text">Practice exercise:</div>
         <form name="exercises">
-        <select name="chooseExercise" ng-model="options" ng-change="hideAnswerAndRefreshButton();randomFunction()">
+
+        <select name="chooseExercise" ng-model="option" ng-change="nextQuestion()">
             <option value="0">shuffle all</option>
             <option value="1">2-by-2 addition</option>
             <option value="2">3-by-3 addition</option>
@@ -26,19 +27,20 @@
             </select>
         </form>
 
-        <div id="verticalSpaceWrapper">
-            <div class="calculations">
-                <p id="var1"> </p>
-                <p id="operator"></p>
-                <p id="var2"> </p>
-                <p>=</p>
-                <p id="answer">answer</p>
-                <p id="counter" ng-click="resetCounter()">(0)</p>
+        <div class="main-text calculation">
+            <div class="left-calc inline">
+                <span>{{var1}}</span>
+                <span ng-bind-html="operator | html"></span>
+                <span>{{var2}}</span>
+                <span>=</span>
+            </div>
+            <div class="right-calc inline" ng-show="showAnswer">
+                {{answer}}
             </div>
         </div>
 
-        <button id="refresh" class="mainButton" ng-click="hideAnswerAndRefreshButton();randomFunction()">refresh</button>
-        <button id="showAnswer" class="mainButton" ng-click="showAnswerAndRefreshButton();count()">reveal answer</button>
+        <button ng-show="showAnswer" class="mainButton" ng-click="nextQuestion()">refresh</button>
+        <button ng-hide="showAnswer" class="mainButton" ng-click="showAnswer = true">reveal answer</button>
         <button id="questionButton" ng-click="helpMe()">?</button>
     </div>
 

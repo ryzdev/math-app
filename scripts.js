@@ -1,44 +1,31 @@
 var app = angular.module("mmApp", []);
 
-app.controller("mmAppController", function($scope) {
-    var helpInfo;
-    var counter = 0;
-    $scope.options = {};
+app.controller("mmAppController", function ($scope) {
 
-    $scope.helpMe = function(){
-        alert(helpInfo);
+    $scope.helpInfo = "";
+    $scope.option = "0";
+    $scope.var1 = 0;
+    $scope.operator = "";
+    $scope.var2 = 0;
+    $scope.answer = 0;
+
+    $scope.helpMe = function () {
+        alert($scope.helpInfo);
     };
 
-    $scope.count = function(){
-        counter++;
-        document.getElementById("counter").innerHTML = "(" + counter + ")";
+    $scope.nextQuestion = function () {
+        $scope.showAnswer = false;
+        randomCalculation();
     };
 
-    $scope.resetCounter = function(){
-        counter = 0;
-        document.getElementById("counter").innerHTML = "(" + counter + ")";
-    };
+    $scope.nextQuestion();
 
-    $scope.hideAnswerAndRefreshButton = function()
-    {
-        document.getElementById("answer").style.visibility="hidden";
-        document.getElementById("refresh").style.display="none";
-        document.getElementById("showAnswer").style.display="inline";
-    };
-
-    $scope.showAnswerAndRefreshButton = function()
-    {
-        document.getElementById("answer").style.visibility="visible";
-        document.getElementById("refresh").style.display="inline";
-        document.getElementById("showAnswer").style.display="none";
-    };
-
-    $scope.randomFunction = function()
-    {
-        var n = parseInt(document.exercises.chooseExercise.value);
-        if (n == 0) {n = Math.floor(Math.random()*9)+1;}
-        switch(n)
-        {
+    function randomCalculation() {
+        var n = parseInt($scope.option);
+        if (n == 0) {
+            n = Math.floor(Math.random() * 9) + 1;
+        }
+        switch (n) {
             case 1:
                 twoByTwoAddition();
                 break;
@@ -76,77 +63,87 @@ app.controller("mmAppController", function($scope) {
         }
     }
 
-    function basicSumEngine(number1MinSize,number1MaxSize,number2MinSize,number2MaxSize,operator)
-    {
-        var number1 = Math.floor(Math.random() * (number1MaxSize-number1MinSize+1))+number1MinSize;
-        var number2 = Math.floor(Math.random() * (number2MaxSize-number2MinSize+1))+number2MinSize;
+    function basicSumEngine(number1MinSize, number1MaxSize, number2MinSize, number2MaxSize, operator) {
+        var number1 = Math.floor(Math.random() * (number1MaxSize - number1MinSize + 1)) + number1MinSize;
+        var number2 = Math.floor(Math.random() * (number2MaxSize - number2MinSize + 1)) + number2MinSize;
         var calculationResult;
-        if(operator == "x") {calculationResult = number1 * number2;}
-        if(operator == "+") {calculationResult = number1 + number2;}
-        if(operator == "-") {
-            while(number2 > number1) {number2 = Math.floor(Math.random() * (number2MaxSize-number2MinSize+1))+number2MinSize;}
-            calculationResult = number1 - number2;}
-
-        document.getElementById("var1").innerHTML = number1;
-        document.getElementById("operator").innerHTML = operator;
-        document.getElementById("var2").innerHTML = number2;
-        document.getElementById("answer").innerHTML = calculationResult;
+        if (operator == "x") {
+            calculationResult = number1 * number2;
+        }
+        if (operator == "+") {
+            calculationResult = number1 + number2;
+        }
+        if (operator == "-") {
+            while (number2 > number1) {
+                number2 = Math.floor(Math.random() * (number2MaxSize - number2MinSize + 1)) + number2MinSize;
+            }
+            calculationResult = number1 - number2;
+        }
+        $scope.var1 = number1;
+        $scope.operator = operator;
+        $scope.var2 = number2;
+        $scope.answer = calculationResult;
     }
 
-    function squareEngine(number1MinSize,number1MaxSize)
-    {
-        var number = Math.floor(Math.random() * (number1MaxSize-number1MinSize+1))+number1MinSize;
+    function squareEngine(number1MinSize, number1MaxSize) {
+        var number = Math.floor(Math.random() * (number1MaxSize - number1MinSize + 1)) + number1MinSize;
         var calculationResult = number * number;
-        document.getElementById("var1").innerHTML = number;
-        document.getElementById("operator").innerHTML = "&#178";
-        document.getElementById("var2").innerHTML = "";
-        document.getElementById("answer").innerHTML = calculationResult;
+        $scope.var1 = number;
+        $scope.operator = "&#178;";
+        $scope.var2 = "";
+        $scope.answer = calculationResult;
     }
 
-    function twoByTwoAddition(){
-        helpInfo = "34 plus 25 is 54 plus 5 is 59";
-        basicSumEngine(10,99,10,99,"+");
+    function twoByTwoAddition() {
+        $scope.helpInfo = "34 plus 25 is 54 plus 5 is 59";
+        basicSumEngine(10, 99, 10, 99, "+");
     }
 
-    function threeByThreeAddition(){
-        helpInfo = "858 plus 634 is 1458 plus 34 is 1488 plus 4 is 1492. You can also switch numbers if easier, or round up.";
-        basicSumEngine(100,999,100,999,"+");
+    function threeByThreeAddition() {
+        $scope.helpInfo = "858 plus 634 is 1458 plus 34 is 1488 plus 4 is 1492. You can also switch numbers if easier, or round up.";
+        basicSumEngine(100, 999, 100, 999, "+");
     }
 
-    function fourByThreeAddition(){
-        helpInfo = "2858 plus 634 is 3458 plus 34 is 3488 plus 4 is 3492. You can also switch numbers if easier, or round up.";
-        basicSumEngine(1000,9999,100,999,"+")
+    function fourByThreeAddition() {
+        $scope.helpInfo = "2858 plus 634 is 3458 plus 34 is 3488 plus 4 is 3492. You can also switch numbers if easier, or round up.";
+        basicSumEngine(1000, 9999, 100, 999, "+")
     }
 
-    function twoByTwoSubtraction(){
-        helpInfo = "If the problem requires borrowing, round up the number and add back the difference";
-        basicSumEngine(10,99,10,99,"-");
+    function twoByTwoSubtraction() {
+        $scope.helpInfo = "If the problem requires borrowing, round up the number and add back the difference";
+        basicSumEngine(10, 99, 10, 99, "-");
     }
 
-    function threeByThreeSubtraction(){
-        helpInfo = "Use compliments if needs borrowing";
-        basicSumEngine(100,999,100,999,"-");
+    function threeByThreeSubtraction() {
+        $scope.helpInfo = "Use compliments if needs borrowing";
+        basicSumEngine(100, 999, 100, 999, "-");
     }
 
-    function fourByThreeSubtraction(){
-        helpInfo = "Use compliments if needs borrowing";
-        basicSumEngine(1000,9999,100,999,"-")
+    function fourByThreeSubtraction() {
+        $scope.helpInfo = "Use compliments if needs borrowing";
+        basicSumEngine(1000, 9999, 100, 999, "-")
     }
 
-    function twoByOneMultiplication(){
-        helpInfo = "Add the two parts of the calculation left-to-right";
-        basicSumEngine(10,99,2,9,"x");
+    function twoByOneMultiplication() {
+        $scope.helpInfo = "Add the two parts of the calculation left-to-right";
+        basicSumEngine(10, 99, 2, 9, "x");
     }
 
-    function threeByOneMultiplication(){
-        helpInfo = "Left-to-right. Say parts of the calculation, and possibly the first two digits out loud. \
+    function threeByOneMultiplication() {
+        $scope.helpInfo = "Left-to-right. Say parts of the calculation, and possibly the first two digits out loud. \
                     Work towards holding the entire problem in your memory. \
                     326 x 7 is 2100 + 140 is 2240 + 42 is 2282";
-        basicSumEngine(100,999,2,9,"x");
+        basicSumEngine(100, 999, 2, 9, "x");
     }
 
-    function twoDigitSquare(){
-        helpInfo = "e.g. 43 squared is 40 x 46 + 3 squared is 1849";
-        squareEngine(10,99);
+    function twoDigitSquare() {
+        $scope.helpInfo = "e.g. 43 squared is 40 x 46 + 3 squared is 1849";
+        squareEngine(10, 99);
+    }
+});
+
+app.filter('html',function($sce){
+    return function(input){
+        return $sce.trustAsHtml(input);
     }
 });

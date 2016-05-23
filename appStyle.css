@@ -1,73 +1,70 @@
-body
-{
-background-color:#250040
+body {
+    background-color: #250040
 }
 
-p
-{
-font-family:"Arial", Helvetica, sans-serif;
-font-size:1.75em;
+.main-text {
+    font-family: "Arial", Helvetica, sans-serif;
+    font-size: 1.4em;
 }
 
-.calculations p
-{
-display:inline;
+.left-calc {
+    float: left;
 }
 
-#verticalSpaceWrapper
-{
-margin-top:50px;
-margin-bottom:50px
+.right-calc {
+    float: right;
 }
 
-.questionBox
-{
-width:275px;
-margin-left:auto;
-margin-right:auto;
-margin-top:50px;
-text-align:center;
-border-style:none;
-padding:5px;
-background-color:#250040;
-color:#f5f5f5
+.inline {
+    display: inline;
 }
 
-.mainButton
-{
-width:200px;
-margin-bottom:1em;
-padding:0.25em;
-font-family:"Arial", Helvetica, sans-serif;
-font-weight:bold;
-font-size:1.5em;
-border-width:4px;
+.calculation {
+    width: 70%;
+    margin: 30px auto;
 }
 
-#questionButton
-{
-font-weight:bold;
-width:30px;
-height:30px;
+.questionBox {
+    width: 275px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    text-align: center;
+    border-style: none;
+    padding: 5px;
+    background-color: #250040;
+    color: #f5f5f5
 }
 
-#questionTitle
-{
-color:grey;
-font-style:italic
+div{
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-select
-{
-color:#848484;
-font-family:"Arial", Helvetica, sans-serif;
-font-size:1.5em
+.mainButton {
+    width: 200px;
+    margin-bottom: 1em;
+    padding: 0.25em;
+    font-family: "Arial", Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 1.5em;
+    border-width: 4px;
+    margin-top: 30px;
 }
 
-#counter
-{
-font-size:1.5em;
-color:#6E6E6E;
-float:right;
-font-weight:bold;
+#questionButton {
+    font-weight: bold;
+    width: 30px;
+    height: 30px;
+}
+
+#questionTitle {
+    color: grey;
+    font-style: italic
+}
+
+select {
+    color: #848484;
+    font-family: "Arial", Helvetica, sans-serif;
+    font-size: 1.5em
 }
