@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="mmApp">
 <title>Mental Math practice</title>
 
-<script src="myScript.js"></script>
 <link rel="stylesheet" type="text/css" href="appStyle.css"/>
+<script src="angular.js"></script>
+<script src="scripts.js"></script>
 
-<body onload="randomFunction();hideAnswerAndRefreshButton()">
+<body ng-controller="mmAppController" ng-init="randomFunction();hideAnswerAndRefreshButton()" >
 
     <div class="questionBox">
 
         <p>Practice exercise:</p>
         <form name="exercises">
-        <select name="chooseExercise" onchange="hideAnswerAndRefreshButton();randomFunction()">
+        <select name="chooseExercise" ng-model="options" ng-change="hideAnswerAndRefreshButton();randomFunction()">
             <option value="0">shuffle all</option>
             <option value="1">2-by-2 addition</option>
             <option value="2">3-by-3 addition</option>
@@ -32,15 +33,14 @@
                 <p id="var2"> </p>
                 <p>=</p>
                 <p id="answer">answer</p>
-                <p id="counter" onclick="resetCounter()">(0)</p>
+                <p id="counter" ng-click="resetCounter()">(0)</p>
             </div>
         </div>
 
-        <button id="refresh" class="mainButton" onclick="hideAnswerAndRefreshButton();randomFunction()">refresh</button>
-        <button id="showAnswer" class="mainButton" onclick="showAnswerAndRefreshButton();count()">reveal answer</button>
-        <button id="questionButton" onclick="helpMe()">?</button>
+        <button id="refresh" class="mainButton" ng-click="hideAnswerAndRefreshButton();randomFunction()">refresh</button>
+        <button id="showAnswer" class="mainButton" ng-click="showAnswerAndRefreshButton();count()">reveal answer</button>
+        <button id="questionButton" ng-click="helpMe()">?</button>
     </div>
-
 
 </body>
 
