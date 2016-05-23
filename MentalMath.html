@@ -10,10 +10,15 @@
 
     <div class="questionBox">
 
-        <div class="main-text">Practice exercise:</div>
+        <div class="main-text">Mental Math</div>
         <form name="exercises">
 
-        <select name="chooseExercise" ng-model="option" ng-change="nextQuestion()">
+            <div>
+                <input type="radio" ng-model="mode" value="learning" ng-click="resetQuestion()"> Learning mode
+                <input type="radio" ng-model="mode" value="exercise" ng-click="nextRandomQuestion()"> Select an exercise
+            </div>
+
+        <select ng-show="mode === 'exercise'" name="chooseExercise" ng-model="option" ng-change="nextRandomQuestion()">
             <option value="0">shuffle all</option>
             <option value="1">2-by-2 addition</option>
             <option value="2">3-by-3 addition</option>
@@ -27,6 +32,8 @@
             </select>
         </form>
 
+        <div ng-show="mode === 'learning'">{{exerciseName}}. Answered {{numberOfAnswersCorrect}} of 3</div>
+
         <div class="main-text calculation">
             <div class="left-calc inline">
                 <span>{{var1}}</span>
@@ -39,9 +46,19 @@
             </div>
         </div>
 
-        <button ng-show="showAnswer" class="mainButton" ng-click="nextQuestion()">refresh</button>
-        <button ng-hide="showAnswer" class="mainButton" ng-click="showAnswer = true">reveal answer</button>
-        <button id="questionButton" ng-click="helpMe()">?</button>
+        <div class="cb">
+            <button ng-hide="showAnswer" class="mainButton" ng-click="showAnswer = true">reveal answer</button>
+
+            <span ng-show="mode === 'exercise'">
+                <button ng-show="showAnswer" class="mainButton" ng-click="nextRandomQuestion()">refresh</button>
+            </span>
+            <span ng-show="mode === 'learning'">
+                <button ng-show="showAnswer" class="halfButton" ng-click="correctAnswer()">&#10003;</button>
+                <button ng-show="showAnswer" class="halfButton" ng-click="resetQuestion()">&#10007;</button>
+            </span>
+
+            <button id="questionButton" class="inline" ng-click="helpMe()">?</button>
+        </div>
     </div>
 
 </body>
