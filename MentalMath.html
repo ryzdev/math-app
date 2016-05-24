@@ -32,19 +32,23 @@
             </select>
         </form>
 
-        <div ng-show="mode === 'learning'">{{exerciseName}}. Answered {{numberOfAnswersCorrect}} of 3</div>
+        <div ng-show="!revisionComplete">
+            <div ng-show="mode === 'learning'">{{progress.exerciseName}}. Answered {{progress.numberOfAnswersCorrect}} of 3</div>
 
-        <div class="main-text calculation">
-            <div class="left-calc inline">
-                <span>{{var1}}</span>
-                <span ng-bind-html="operator | html"></span>
-                <span>{{var2}}</span>
-                <span>=</span>
-            </div>
-            <div class="right-calc inline" ng-show="showAnswer">
-                {{answer}}
+            <div class="main-text calculation">
+                <div class="left-calc inline">
+                    <span>{{var1}}</span>
+                    <span ng-bind-html="operator | html"></span>
+                    <span>{{var2}}</span>
+                    <span>=</span>
+                </div>
+                <div class="right-calc inline" ng-show="showAnswer">
+                    {{answer}}
+                </div>
             </div>
         </div>
+
+        <div ng-show="revisionComplete">Revision complete!</div>
 
         <div class="cb">
             <button ng-hide="showAnswer" class="mainButton" ng-click="showAnswer = true">reveal answer</button>
