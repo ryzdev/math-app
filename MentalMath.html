@@ -15,8 +15,8 @@
         <form name="exercises">
 
             <div>
-                <input type="radio" ng-model="mode" value="learning" ng-click="resetQuestion()"> Learning mode
-                <input type="radio" ng-model="mode" value="exercise" ng-click="nextRandomQuestion()"> Select an exercise
+                <input type="radio" ng-model="mode" value="learning" ng-click="nextQuestion()"> Learning mode
+                <input type="radio" ng-model="mode" value="exercise" ng-click="nextQuestion()"> Select an exercise
             </div>
 
         <select ng-show="mode === 'exercise'" name="chooseExercise" ng-model="option" ng-change="nextRandomQuestion()">
@@ -33,8 +33,8 @@
             </select>
         </form>
 
-        <div ng-show="!revisionComplete">
-            <div ng-show="mode === 'learning'">{{exerciseName}}. Answered {{progress.numberOfAnswersCorrect}} of 3</div>
+        <div ng-hide="mode === 'learning' && revisionComplete">
+            <div ng-show="mode === 'learning'">{{exerciseName}}. {{progress.questionsRemaining}} remaining.</div>
 
             <div class="main-text calculation">
                 <div class="left-calc inline">
@@ -49,20 +49,20 @@
             </div>
         </div>
 
-        <div ng-show="revisionComplete">
+        <div ng-show="mode === 'learning' && revisionComplete">
             <div>Revision complete!</div>
             <button ng-click="clearProgressAndReset()">Reset</button>
         </div>
 
-        <div class="cb">
+        <div ng-hide="mode === 'learning' && revisionComplete" class="cb">
             <button ng-hide="showAnswer" class="mainButton" ng-click="showAnswer = true">reveal answer</button>
 
             <span ng-show="mode === 'exercise'">
-                <button ng-show="showAnswer" class="mainButton" ng-click="nextRandomQuestion()">refresh</button>
+                <button ng-show="showAnswer" class="mainButton" ng-click="refreshQuestion()">refresh</button>
             </span>
             <span ng-show="mode === 'learning'">
                 <button ng-show="showAnswer" class="halfButton" ng-click="correctAnswer()">&#10003;</button>
-                <button ng-show="showAnswer" class="halfButton" ng-click="resetQuestion()">&#10007;</button>
+                <button ng-show="showAnswer" class="halfButton" ng-click="incorrectAnswer()">&#10007;</button>
             </span>
 
             <button id="questionButton" class="inline" ng-click="helpMe()">?</button>
@@ -73,27 +73,8 @@
 
 </html>
 
-
 <!--
-    0) get calculation inline DONE
-    1) create next function DONE
-    2) get random switch working DONE
-    2b) continue in intellij DONE
-    3) refactor functions to avoid repeating code
-    3) add checkbox selectors DONE
-    3b)refactor buttons into one for refresh/reveal DONE
-    3c) comment out/remove current exercise prompt - think about where its going to go eventually! DONE
-    4) get mental math learning files
-    5) add progression in actual order
-    create minimum values for e.g. 3-by-3
-    add parameters to sum engine to reduce about of code
-
-6) continue when decide to actually make app
-
-edit launcher to put app on bottom right
-minimise appearance of 4-by-3s?
-change pointer for counter hover
-add support for space bar/return key
-fix loading flicker issue/hideshow button correct?
-re-add negatives?
+-mobile optimisation
+-algorithm for learning
+-carry on adding with book
 -->

@@ -3,6 +3,8 @@ var app = angular.module("mmApp", ['ngCookies']);
 app.controller("mmAppController", function($scope, $cookies) {
 
     var cookieName = "mentalMath";
+    var defaultRoundSize = 3;
+    var numberOfExercises = 9;
 
     $scope.mode = "learning";
     $scope.helpInfo = "";
@@ -17,42 +19,29 @@ app.controller("mmAppController", function($scope, $cookies) {
 
     $scope.progress = {
         currentExercise: 0,
-        numberOfAnswersCorrect: 0
-    };
-
-    setup();
-
-    $scope.nextRandomQuestion = function () {
-        $scope.showAnswer = false;
-        var n = parseInt($scope.option);
-        if (n == 0) {
-            n = Math.floor(Math.random() * 9) + 1;
-        }
-        selectExercise(n);
+        questionsRemaining: 0
     };
 
     $scope.correctAnswer = function () {
         $scope.showAnswer = false;
-        $scope.progress.numberOfAnswersCorrect++;
-        if ($scope.progress.numberOfAnswersCorrect > 2) {
-
-            if ($scope.progress.currentExercise == 9) {
-                $scope.revisionComplete = true;
-                return;
+        $scope.progress.questionsRemaining--;
+        if ($scope.progress.questionsRemaining === 0) {
+            var won = checkWinning();
+            if (!won) {
+                $scope.progress.currentExercise++;
+                $scope.progress.questionsRemaining = defaultRoundSize;
             }
-
-            $scope.progress.currentExercise++;
-            $scope.progress.numberOfAnswersCorrect = 0;
         }
         saveProgress();
         selectExercise($scope.progress.currentExercise);
     };
+    $scope.incorrectAnswer = function() {
+        $scope.progress.questionsRemaining = defaultRoundSize;
+        nextQuestion();
+    };
 
-    $scope.resetQuestion = function () {
-        $scope.showAnswer = false;
-        $scope.progress.numberOfAnswersCorrect = 0;
-        saveProgress();
-        selectExercise($scope.progress.currentExercise);
+    $scope.refreshQuestion = function() {
+        nextQuestion();
     };
 
     $scope.helpMe = function () {
@@ -62,26 +51,48 @@ app.controller("mmAppController", function($scope, $cookies) {
     $scope.clearProgressAndReset = function() {
         $cookies.remove(cookieName);
         setup();
+        $scope.revisionComplete = false;
     };
+
+    setup();
 
     function setup() {
         var savedProgress = $cookies.getObject(cookieName);
         if(savedProgress){
             $scope.progress = savedProgress;
+            checkWinning();
         } else {
-            $scope.progress = {currentExercise: 1, numberOfAnswersCorrect: 0};
-            $scope.revisionComplete = false;
+            $scope.progress = {currentExercise: 1, questionsRemaining: defaultRoundSize};
         }
+        nextQuestion();
+    }
 
+    function nextQuestion(){
+        $scope.showAnswer = false;
         if ($scope.mode === 'learning') {
-            $scope.resetQuestion();
+            selectExercise($scope.progress.currentExercise);
         } else {
-            $scope.nextRandomQuestion();
+            nextRandomQuestion();
         }
+    }
+
+    function nextRandomQuestion() {
+        var n = parseInt($scope.option);
+        if (n == 0) {
+            n = Math.floor(Math.random() * numberOfExercises) + 1;
+        }
+        selectExercise(n);
     }
 
     function saveProgress() {
         $cookies.putObject(cookieName, $scope.progress);
+    }
+
+    function checkWinning() {
+        if ($scope.progress.currentExercise === numberOfExercises && $scope.progress.questionsRemaining === 0) {
+            $scope.revisionComplete = true;
+            return true;
+        }
     }
 
     function selectExercise(n) {
