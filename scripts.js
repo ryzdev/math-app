@@ -1,10 +1,14 @@
-var app = angular.module("mmApp", []);
+var app = angular.module("mmApp", ['ngCookies']);
 
-app.controller("mmAppController", function ($scope) {
+app.controller("mmAppController", function($scope, $cookies) {
+
+    var cookieName = "mentalMath";
 
     $scope.mode = "learning";
     $scope.helpInfo = "";
     $scope.option = "0";
+    $scope.revisionComplete = false;
+    $scope.exerciseName = "";
 
     $scope.var1 = 0;
     $scope.operator = "";
@@ -12,10 +16,11 @@ app.controller("mmAppController", function ($scope) {
     $scope.answer = 0;
 
     $scope.progress = {
-        currentExercise: 1,
-        numberOfAnswersCorrect: 0,
-        exerciseName: ""
+        currentExercise: 0,
+        numberOfAnswersCorrect: 0
     };
+
+    setup();
 
     $scope.nextRandomQuestion = function () {
         $scope.showAnswer = false;
@@ -39,14 +44,14 @@ app.controller("mmAppController", function ($scope) {
             $scope.progress.currentExercise++;
             $scope.progress.numberOfAnswersCorrect = 0;
         }
-        // save progress
+        saveProgress();
         selectExercise($scope.progress.currentExercise);
     };
 
     $scope.resetQuestion = function () {
         $scope.showAnswer = false;
         $scope.progress.numberOfAnswersCorrect = 0;
-        //save progress
+        saveProgress();
         selectExercise($scope.progress.currentExercise);
     };
 
@@ -54,9 +59,20 @@ app.controller("mmAppController", function ($scope) {
         alert($scope.helpInfo);
     };
 
-    setup();
+    $scope.clearProgressAndReset = function() {
+        $cookies.remove(cookieName);
+        setup();
+    };
 
     function setup() {
+        var savedProgress = $cookies.getObject(cookieName);
+        if(savedProgress){
+            $scope.progress = savedProgress;
+        } else {
+            $scope.progress = {currentExercise: 1, numberOfAnswersCorrect: 0};
+            $scope.revisionComplete = false;
+        }
+
         if ($scope.mode === 'learning') {
             $scope.resetQuestion();
         } else {
@@ -64,52 +80,56 @@ app.controller("mmAppController", function ($scope) {
         }
     }
 
+    function saveProgress() {
+        $cookies.putObject(cookieName, $scope.progress);
+    }
+
     function selectExercise(n) {
         switch (n) {
             case 1:
-                $scope.progress.exerciseName = 'Two by two addition';
+                $scope.exerciseName = 'Two by two addition';
                 $scope.helpInfo = "34 plus 25 is 54 plus 5 is 59";
                 basicSumEngine(10, 99, 10, 99, "+");
                 break;
 
             case 2:
-                $scope.progress.exerciseName = 'Three by three addition';
+                $scope.exerciseName = 'Three by three addition';
                 $scope.helpInfo = "858 plus 634 is 1458 plus 34 is 1488 plus 4 is 1492. You can also switch numbers if easier, or round up.";
                 basicSumEngine(100, 999, 100, 999, "+");
                 break;
 
             case 3:
-                $scope.progress.exerciseName = 'Four by three addition';
+                $scope.exerciseName = 'Four by three addition';
                 $scope.helpInfo = "2858 plus 634 is 3458 plus 34 is 3488 plus 4 is 3492. You can also switch numbers if easier, or round up.";
                 basicSumEngine(1000, 9999, 100, 999, "+");
                 break;
 
             case 4:
-                $scope.progress.exerciseName = 'Two by two subtraction';
+                $scope.exerciseName = 'Two by two subtraction';
                 $scope.helpInfo = "If the problem requires borrowing, round up the number and add back the difference";
                 basicSumEngine(10, 99, 10, 99, "-");
                 break;
 
             case 5:
-                $scope.progress.exerciseName = 'Three by three subtraction';
+                $scope.exerciseName = 'Three by three subtraction';
                 $scope.helpInfo = "Use compliments if needs borrowing";
                 basicSumEngine(100, 999, 100, 999, "-");
                 break;
 
             case 6:
-                $scope.progress.exerciseName = 'Four by three subtraction';
+                $scope.exerciseName = 'Four by three subtraction';
                 $scope.helpInfo = "Use compliments if needs borrowing";
                 basicSumEngine(1000, 9999, 100, 999, "-");
                 break;
 
             case 7:
-                $scope.progress.exerciseName = 'Two by one multiplication';
+                $scope.exerciseName = 'Two by one multiplication';
                 $scope.helpInfo = "Add the two parts of the calculation left-to-right";
                 basicSumEngine(10, 99, 2, 9, "x");
                 break;
 
             case 8:
-                $scope.progress.exerciseName = 'Three by one multiplication';
+                $scope.exerciseName = 'Three by one multiplication';
                 $scope.helpInfo = "Left-to-right. Say parts of the calculation, and possibly the first two digits out loud. \
                     Work towards holding the entire problem in your memory. \
                     326 x 7 is 2100 + 140 is 2240 + 42 is 2282";
@@ -117,7 +137,7 @@ app.controller("mmAppController", function ($scope) {
                 break;
 
             case 9:
-                $scope.progress.exerciseName = 'Two digit square';
+                $scope.exerciseName = 'Two digit square';
                 $scope.helpInfo = "e.g. 43 squared is 40 x 46 + 3 squared is 1849";
                 squareEngine(10, 99);
         }
