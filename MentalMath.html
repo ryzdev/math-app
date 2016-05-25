@@ -7,6 +7,8 @@
 <script src="angular-cookies.js"></script>
 <script src="scripts.js"></script>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <body ng-controller="mmAppController">
 
     <div class="questionBox">
@@ -15,11 +17,11 @@
         <form name="exercises">
 
             <div>
-                <input type="radio" ng-model="mode" value="learning" ng-click="nextQuestion()"> Learning mode
-                <input type="radio" ng-model="mode" value="exercise" ng-click="nextQuestion()"> Select an exercise
+                <input type="radio" ng-model="mode" value="learning" ng-click="refreshQuestion()"> Learning mode
+                <input type="radio" ng-model="mode" value="exercise" ng-click="refreshQuestion()"> Select an exercise
             </div>
 
-        <select ng-show="mode === 'exercise'" name="chooseExercise" ng-model="option" ng-change="nextRandomQuestion()">
+        <select ng-show="mode === 'exercise'" name="chooseExercise" ng-model="option" ng-change="refreshQuestion()">
             <option value="0">shuffle all</option>
             <option value="1">2-by-2 addition</option>
             <option value="2">3-by-3 addition</option>
@@ -65,7 +67,7 @@
                 <button ng-show="showAnswer" class="halfButton" ng-click="incorrectAnswer()">&#10007;</button>
             </span>
 
-            <button id="questionButton" class="inline" ng-click="helpMe()">?</button>
+            <button class="questionButton inline" ng-click="helpMe()">?</button>
         </div>
     </div>
 
@@ -74,7 +76,6 @@
 </html>
 
 <!--
--mobile optimisation
 -algorithm for learning
 -carry on adding with book
 -->

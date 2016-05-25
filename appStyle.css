@@ -67,15 +67,10 @@ div {
     margin-top: 30px;
 }
 
-#questionButton {
+.questionButton {
     font-weight: bold;
     width: 30px;
     height: 30px;
-}
-
-#questionTitle {
-    color: grey;
-    font-style: italic
 }
 
 select {
