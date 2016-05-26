@@ -85,7 +85,9 @@ app.controller("mmAppController", function($scope, $cookies) {
     }
 
     function saveProgress() {
-        $cookies.putObject(cookieName, $scope.progress);
+        var now = new Date();
+        var oneYearFromNow = now.setFullYear(now.getFullYear() + 1);
+        $cookies.putObject(cookieName, $scope.progress, {expires: oneYearFromNow});
     }
 
     function checkWinning() {
