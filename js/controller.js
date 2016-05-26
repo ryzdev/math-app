@@ -4,6 +4,7 @@ app.controller("mmAppController", function($scope, $cookies) {
 
     var cookieName = "mentalMath";
     var defaultRoundSize = 3;
+    $scope.scheduledExercises = []; // scope only for easy debugging
 
     $scope.mode = "learning";
     $scope.helpInfo = "";
@@ -16,10 +17,7 @@ app.controller("mmAppController", function($scope, $cookies) {
     $scope.var2 = 0;
     $scope.answer = 0;
 
-    $scope.progress = {
-        currentExercise: 0,
-        questionsRemaining: 0
-    };
+    $scope.progress = getResetProgress();
 
     var exercises = getExercises();
 
@@ -62,10 +60,20 @@ app.controller("mmAppController", function($scope, $cookies) {
         if(savedProgress){
             $scope.progress = savedProgress;
             checkWinning();
+            buildScheduledExercisesList();
         } else {
-            $scope.progress = {currentExercise: 1, questionsRemaining: defaultRoundSize};
+            $scope.progress = getResetProgress();
         }
         nextQuestion();
+    }
+
+    function buildScheduledExercisesList() {
+        for (var x = 1; x <= exercises.length; x++) {
+            var exercise = $scope.progress.allExercises[x.toString()];
+            if (exercise && exercise.scheduled < new Date().getTime()) {
+                $scope.scheduledExercises.push(x);
+            }
+        }
     }
 
     function nextQuestion(){
@@ -86,6 +94,12 @@ app.controller("mmAppController", function($scope, $cookies) {
     }
 
     function saveProgress() {
+        var currentExerciseId = $scope.progress.currentExercise.toString();
+        $scope.progress.allExercises[currentExerciseId] = {
+            currentInterval: 1,
+            scheduled: new Date().getTime()};
+        $scope.testAllProgress = $scope.progress.allExercises; // debugging only
+
         var cookieExpiry = new Date();
         cookieExpiry.setFullYear(cookieExpiry.getFullYear() + 1);
         $cookies.putObject(cookieName, $scope.progress, {expires: cookieExpiry.toUTCString()});
@@ -98,6 +112,13 @@ app.controller("mmAppController", function($scope, $cookies) {
         }
     }
 
+    function getResetProgress() {
+        return {
+            currentExercise: 1,
+            questionsRemaining: defaultRoundSize,
+            allExercises: {}
+        };
+    }
 
     function basicSumEngine(number1MinSize, number1MaxSize, number2MinSize, number2MaxSize, operator) {
         var number1 = Math.floor(Math.random() * (number1MaxSize - number1MinSize + 1)) + number1MinSize;
