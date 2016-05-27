@@ -6,6 +6,8 @@ app.controller("mmAppController", function($scope, $cookies) {
     var defaultRoundSize = 3;
     var learningIntervals = [0,1,2,4,8];
     $scope.scheduledExercises = []; // scope only for easy debugging
+    $scope.currentRevisionExercise = {};
+    $scope.errors = false;
 
     $scope.mode = "learning";
     $scope.helpInfo = "";
@@ -19,25 +21,32 @@ app.controller("mmAppController", function($scope, $cookies) {
     $scope.answer = 0;
 
     $scope.progress = getResetProgress();
+    $scope.questionsRemaining = 3;
 
     var exercises = getExercises();
 
     $scope.correctAnswer = function () {
         $scope.showAnswer = false;
-        $scope.progress.questionsRemaining--;
-        if ($scope.progress.questionsRemaining === 0) {
-            saveProgress();
-            var won = checkWinning();
-            if (!won) {
-                $scope.progress.currentExercise.id++;
-                $scope.progress.questionsRemaining = defaultRoundSize;
+        $scope.questionsRemaining--;
+        if ($scope.questionsRemaining === 0) {
+
+            if ($scope.revisionMode) {
+                saveProgress($scope.currentRevisionExercise);
+            } else {
+                saveProgress($scope.progress.currentExercise);
             }
+
+            var won = checkWinning();
+            if (!won && !$scope.revisionMode) {
+                $scope.progress.currentExercise.id++;
+            }
+            $scope.questionsRemaining = defaultRoundSize;
         }
-        exercises[$scope.progress.currentExercise.id -1].exercise();
+        nextQuestion();
     };
     $scope.incorrectAnswer = function() {
-        $scope.progress.questionsRemaining = defaultRoundSize;
-        $scope.progress.currentExercise.errors = true;
+        $scope.questionsRemaining = defaultRoundSize;
+        $scope.errors = true;
         nextQuestion();
     };
 
@@ -62,28 +71,36 @@ app.controller("mmAppController", function($scope, $cookies) {
         if(savedProgress){
             $scope.progress = savedProgress;
             checkWinning();
-            buildScheduledExercisesList();
         } else {
             $scope.progress = getResetProgress();
         }
         nextQuestion();
     }
 
-    function buildScheduledExercisesList() {
-        for (var x = 1; x <= exercises.length; x++) {
-            var exercise = $scope.progress.allExercises[x.toString()];
-            if (exercise && exercise.scheduled < new Date().getTime()) {
-                $scope.scheduledExercises.push(exercise);
-            }
-        }
-    }
-
     function nextQuestion(){
         $scope.showAnswer = false;
         if ($scope.mode === 'learning') {
-            exercises[$scope.progress.currentExercise.id -1].exercise();
+            if($scope.scheduledExercises.length){
+                $scope.revisionMode = true;
+                var index = Math.floor(Math.random() * $scope.scheduledExercises.length);
+                $scope.currentRevisionExercise = $scope.scheduledExercises[index];
+                exercises[$scope.currentRevisionExercise.id -1].exercise();
+                $scope.scheduledExercises.splice(index, 1);
+            } else {
+                $scope.revisionMode = false;
+                exercises[$scope.progress.currentExercise.id -1].exercise();
+            }
         } else {
             nextRandomQuestion();
+        }
+    }
+
+    function buildScheduledExercisesList() {
+        for (var x = 1; x <= exercises.length; x++) {
+            var exercise = $scope.progress.revision[x.toString()];
+            if (exercise && exercise.scheduled < new Date().getTime()) {
+                $scope.scheduledExercises.push({id: x, scheduling: exercise});
+            }
         }
     }
 
@@ -95,39 +112,39 @@ app.controller("mmAppController", function($scope, $cookies) {
         exercises[n-1].exercise();
     }
 
-    function saveProgress() {
-        var currentExerciseId = $scope.progress.currentExercise.id.toString();
-
-        var nextInterval = getNextInterval($scope.progress.currentExercise.errors, $scope.progress.currentExercise.interval);
+    function saveProgress(exercise) {
+        var nextInterval = getNextInterval(exercise.interval);
+        $scope.errors = false;
         var nextScheduled = new Date();
         nextScheduled.setDate(nextScheduled.getDate() + learningIntervals[nextInterval]);
 
-        $scope.progress.allExercises[currentExerciseId] = {
+        $scope.progress.revision[exercise.id.toString()] = {
             interval: nextInterval,
             scheduled: nextScheduled.getTime()
         };
-        $scope.testAllProgress = $scope.progress.allExercises; // debugging only
+        buildScheduledExercisesList();
+        $scope.testAllProgress = $scope.progress.revision; // debugging only
 
         var cookieExpiry = new Date();
         cookieExpiry.setFullYear(cookieExpiry.getFullYear() + 1);
         $cookies.putObject(cookieName, $scope.progress, {expires: cookieExpiry.toUTCString()});
     }
 
-    function getNextInterval(errors, currentInterval) {
-        if (errors) {
+    function getNextInterval(currentInterval) {
+        if ($scope.errors) {
             if (currentInterval > 0) {
                 return $scope.progress.currentExercise.interval - 1
             } else {
                 return 0;
             }
         }
-        if (!errors && currentInterval < learningIntervals.length -1) {
+        if (!$scope.errors && currentInterval < learningIntervals.length -1) {
             return $scope.progress.currentExercise.interval + 1
         }
     }
 
     function checkWinning() {
-        if ($scope.progress.currentExercise.id === exercises.length && $scope.progress.questionsRemaining === 0) {
+        if ($scope.progress.currentExercise.id === exercises.length && $scope.questionsRemaining === 0) {
             $scope.revisionComplete = true;
             return true;
         }
@@ -137,11 +154,9 @@ app.controller("mmAppController", function($scope, $cookies) {
         return {
             currentExercise: {
                 id: 1,
-                interval: 0,
-                errors: false
+                interval: 0
             },
-            questionsRemaining: defaultRoundSize,
-            allExercises: {}
+            revision: {}
         };
     }
 

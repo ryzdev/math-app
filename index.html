@@ -38,7 +38,7 @@
         </form>
 
         <div ng-hide="mode === 'learning' && revisionComplete">
-            <div ng-show="mode === 'learning'">{{exerciseName}}. {{progress.questionsRemaining}} remaining.</div>
+            <div ng-show="mode === 'learning'">{{exerciseName}}. {{questionsRemaining}} remaining.</div>
 
             <div class="main-text calculation">
                 <div class="left-calc inline">
@@ -71,6 +71,8 @@
 
             <button class="questionButton inline" ng-click="helpMe()">?</button>
         </div>
+        <div>revision mode: {{revisionMode}}</div>
+        <div>currentRevisionExercise.id: {{currentRevisionExercise.id}}</div>
     </div>
 
 </body>
