@@ -4,6 +4,7 @@ app.controller("mmAppController", function($scope, $cookies) {
 
     var cookieName = "mentalMath";
     var defaultRoundSize = 3;
+    var learningIntervals = [0,1,2,4,8];
     $scope.scheduledExercises = []; // scope only for easy debugging
 
     $scope.mode = "learning";
@@ -25,17 +26,18 @@ app.controller("mmAppController", function($scope, $cookies) {
         $scope.showAnswer = false;
         $scope.progress.questionsRemaining--;
         if ($scope.progress.questionsRemaining === 0) {
+            saveProgress();
             var won = checkWinning();
             if (!won) {
-                $scope.progress.currentExercise++;
+                $scope.progress.currentExercise.id++;
                 $scope.progress.questionsRemaining = defaultRoundSize;
             }
         }
-        saveProgress();
-        exercises[$scope.progress.currentExercise -1].exercise();
+        exercises[$scope.progress.currentExercise.id -1].exercise();
     };
     $scope.incorrectAnswer = function() {
         $scope.progress.questionsRemaining = defaultRoundSize;
+        $scope.progress.currentExercise.errors = true;
         nextQuestion();
     };
 
@@ -71,7 +73,7 @@ app.controller("mmAppController", function($scope, $cookies) {
         for (var x = 1; x <= exercises.length; x++) {
             var exercise = $scope.progress.allExercises[x.toString()];
             if (exercise && exercise.scheduled < new Date().getTime()) {
-                $scope.scheduledExercises.push(x);
+                $scope.scheduledExercises.push(exercise);
             }
         }
     }
@@ -79,7 +81,7 @@ app.controller("mmAppController", function($scope, $cookies) {
     function nextQuestion(){
         $scope.showAnswer = false;
         if ($scope.mode === 'learning') {
-            exercises[$scope.progress.currentExercise -1].exercise();
+            exercises[$scope.progress.currentExercise.id -1].exercise();
         } else {
             nextRandomQuestion();
         }
@@ -90,14 +92,20 @@ app.controller("mmAppController", function($scope, $cookies) {
         if (n == 0) {
             n = Math.floor(Math.random() * exercises.length);
         }
-        exercises[n].exercise();
+        exercises[n-1].exercise();
     }
 
     function saveProgress() {
-        var currentExerciseId = $scope.progress.currentExercise.toString();
+        var currentExerciseId = $scope.progress.currentExercise.id.toString();
+
+        var nextInterval = getNextInterval($scope.progress.currentExercise.errors, $scope.progress.currentExercise.interval);
+        var nextScheduled = new Date();
+        nextScheduled.setDate(nextScheduled.getDate() + learningIntervals[nextInterval]);
+
         $scope.progress.allExercises[currentExerciseId] = {
-            currentInterval: 1,
-            scheduled: new Date().getTime()};
+            interval: nextInterval,
+            scheduled: nextScheduled.getTime()
+        };
         $scope.testAllProgress = $scope.progress.allExercises; // debugging only
 
         var cookieExpiry = new Date();
@@ -105,8 +113,21 @@ app.controller("mmAppController", function($scope, $cookies) {
         $cookies.putObject(cookieName, $scope.progress, {expires: cookieExpiry.toUTCString()});
     }
 
+    function getNextInterval(errors, currentInterval) {
+        if (errors) {
+            if (currentInterval > 0) {
+                return $scope.progress.currentExercise.interval - 1
+            } else {
+                return 0;
+            }
+        }
+        if (!errors && currentInterval < learningIntervals.length -1) {
+            return $scope.progress.currentExercise.interval + 1
+        }
+    }
+
     function checkWinning() {
-        if ($scope.progress.currentExercise === exercises.length && $scope.progress.questionsRemaining === 0) {
+        if ($scope.progress.currentExercise.id === exercises.length && $scope.progress.questionsRemaining === 0) {
             $scope.revisionComplete = true;
             return true;
         }
@@ -114,7 +135,11 @@ app.controller("mmAppController", function($scope, $cookies) {
 
     function getResetProgress() {
         return {
-            currentExercise: 1,
+            currentExercise: {
+                id: 1,
+                interval: 0,
+                errors: false
+            },
             questionsRemaining: defaultRoundSize,
             allExercises: {}
         };
