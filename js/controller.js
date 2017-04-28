@@ -5,7 +5,7 @@ app.controller("mmAppController", function($scope, $cookies) {
     var cookieName = "mentalMath";
     var defaultRoundSize = 3;
 
-    $scope.mode = "learning";
+    $scope.mode = "exercise";
     $scope.helpInfo = "";
     $scope.option = "0";
     $scope.revisionComplete = false;
@@ -58,7 +58,7 @@ app.controller("mmAppController", function($scope, $cookies) {
     setup();
 
     function setup() {
-        var savedProgress = $cookies.getObject(cookieName);
+        var savedProgress = null; //$cookies.getObject(cookieName);
         if(savedProgress){
             $scope.progress = savedProgress;
             checkWinning();
@@ -82,7 +82,7 @@ app.controller("mmAppController", function($scope, $cookies) {
         if (n == 0) {
             n = Math.floor(Math.random() * exercises.length);
         }
-        exercises[n].exercise();
+        exercises[n-1].exercise();
     }
 
     function saveProgress() {
@@ -128,6 +128,38 @@ app.controller("mmAppController", function($scope, $cookies) {
         $scope.operator = "&#178;";
         $scope.var2 = "";
         $scope.answer = calculationResult;
+    }
+
+    function kgToLbs(number1MinSize, number1MaxSize) {
+        var number = randomNumber(number1MinSize, number1MaxSize);
+        var calculationResult = (number * 2) + (number * 2 / 10);
+        setVars(number, "kg in lbs", "", calculationResult);
+    }
+
+    function lbsToKg(number1MinSize, number1MaxSize) {
+        var number = randomNumber(number1MinSize, number1MaxSize);
+        var calculationResult = (number / 2) - (number / 2 / 10);
+        setVars(number, "lbs in kg", "", calculationResult);
+    }
+
+    function kgToStone(min, max) {
+        var kgs = randomNumber(min, max);
+        var resultInLbs = (kgs * 2) + (kgs * 2 / 10);
+        var stone = Math.floor(resultInLbs / 14);
+        var lbs = Math.floor(resultInLbs) % 14;
+        var result = stone + " st, " + lbs + " lbs";
+        setVars(kgs, "kg", "", result);
+     }
+
+    function randomNumber(min, max){
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function setVars(var1, operator, var2, answer){
+        $scope.var1 = var1;
+        $scope.operator = operator;
+        $scope.var2 = var2;
+        $scope.answer = answer;
     }
 
     function getExercises(){
@@ -196,6 +228,34 @@ app.controller("mmAppController", function($scope, $cookies) {
                     $scope.exerciseName = 'Two digit square';
                     $scope.helpInfo = "e.g. 43 squared is 40 x 46 + 3 squared is 1849";
                     squareEngine(10, 99);
+                }
+            }, {
+                id: 10,
+                exercise: function () {
+                    $scope.exerciseName = '14 times table';
+                    $scope.helpInfo = "On your own! Rote learning!";
+                    basicSumEngine(14, 14, 1, 20, "x");
+                }
+            }, {
+                id: 11,
+                exercise: function () {
+                    $scope.exerciseName = 'convert kg to lbs';
+                    $scope.helpInfo = "Multiply by 2 and add 10%";
+                    kgToLbs(1, 100);
+                }
+            }, {
+                id: 12,
+                exercise: function () {
+                    $scope.exerciseName = 'convert lbs to kgs';
+                    $scope.helpInfo = "Divide by 2 and minus 10%";
+                    lbsToKg(10, 300);
+                }
+            }, {
+                id: 13,
+                exercise: function () {
+                    $scope.exerciseName = 'convert kgs to stone & lbs';
+                    $scope.helpInfo = "Multiply by 2 and add 10%, divide by 14 and add remainder";
+                    kgToStone(10, 100);
                 }
             }
         ];
