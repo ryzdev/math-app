@@ -151,6 +151,15 @@ app.controller("mmAppController", function($scope, $cookies) {
         setVars(kgs, "kg", "", result);
      }
 
+     function stoneToKg(min, max) {
+        var stone = randomNumber(min, max);
+        var lbsDecimal = randomNumber(0, 1);
+        var totalInLbs = stone * 14 + lbsDecimal;
+        var lbs = Math.floor(lbsDecimal * 13);
+        var kgs = (totalInLbs / 2) - (totalInLbs / 2 / 10);
+        setVars(stone + "st, " + lbs + " lbs", "in kgs", "", kgs);
+     }
+
     function randomNumber(min, max){
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -256,6 +265,13 @@ app.controller("mmAppController", function($scope, $cookies) {
                     $scope.exerciseName = 'convert kgs to stone & lbs';
                     $scope.helpInfo = "Multiply by 2 and add 10%, divide by 14 and add remainder";
                     kgToStone(10, 100);
+                }
+            }, {
+                id: 14,
+                exercise: function () {
+                    $scope.exerciseName = 'convert stone & lbs to kg';
+                    $scope.helpInfo = "multiply stone by 14 and add remainder, divide by 2 and minus 10%";
+                    stoneToKg(1, 20);
                 }
             }
         ];
