@@ -5,7 +5,7 @@ app.controller("mmAppController", function($scope, $cookies) {
     var cookieName = "mentalMath";
     var defaultRoundSize = 3;
 
-    $scope.mode = "exercise";
+    $scope.mode = "learning";
     $scope.helpInfo = "";
     $scope.option = "0";
     $scope.revisionComplete = false;
@@ -58,7 +58,7 @@ app.controller("mmAppController", function($scope, $cookies) {
     setup();
 
     function setup() {
-        var savedProgress = null; //$cookies.getObject(cookieName);
+        var savedProgress = $cookies.getObject(cookieName);
         if(savedProgress){
             $scope.progress = savedProgress;
             checkWinning();
@@ -243,7 +243,7 @@ app.controller("mmAppController", function($scope, $cookies) {
                 exercise: function () {
                     $scope.exerciseName = '14 times table';
                     $scope.helpInfo = "On your own! Rote learning!";
-                    basicSumEngine(14, 14, 1, 20, "x");
+                    basicSumEngine(14, 14, 1, 14, "x");
                 }
             }, {
                 id: 11,

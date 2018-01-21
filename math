@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd ~/code/personal/math-app
+open http://localhost:8081
+http-server
