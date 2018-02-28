@@ -132,13 +132,13 @@ app.controller("mmAppController", function($scope, $cookies) {
 
     function kgToLbs(number1MinSize, number1MaxSize) {
         var number = randomNumber(number1MinSize, number1MaxSize);
-        var calculationResult = (number * 2) + (number * 2 / 10);
+        var calculationResult = Math.round((number * 2) + (number * 2 / 10));
         setVars(number, "kg in lbs", "", calculationResult);
     }
 
     function lbsToKg(number1MinSize, number1MaxSize) {
         var number = randomNumber(number1MinSize, number1MaxSize);
-        var calculationResult = (number / 2) - (number / 2 / 10);
+        var calculationResult = Math.round((number / 2) - (number / 2 / 10));
         setVars(number, "lbs in kg", "", calculationResult);
     }
 
@@ -146,17 +146,16 @@ app.controller("mmAppController", function($scope, $cookies) {
         var kgs = randomNumber(min, max);
         var resultInLbs = (kgs * 2) + (kgs * 2 / 10);
         var stone = Math.floor(resultInLbs / 14);
-        var lbs = Math.floor(resultInLbs) % 14;
+        var lbs = Math.floor(resultInLbs % 14);
         var result = stone + " st, " + lbs + " lbs";
         setVars(kgs, "kg", "", result);
      }
 
      function stoneToKg(min, max) {
         var stone = randomNumber(min, max);
-        var lbsDecimal = randomNumber(0, 1);
-        var totalInLbs = stone * 14 + lbsDecimal;
-        var lbs = Math.floor(lbsDecimal * 13);
-        var kgs = (totalInLbs / 2) - (totalInLbs / 2 / 10);
+        var lbs = randomNumber(0, 13);
+        var totalInLbs = stone * 14 + lbs;
+        var kgs = Math.round((totalInLbs / 2) - (totalInLbs / 2 / 10));
         setVars(stone + "st, " + lbs + " lbs", "in kgs", "", kgs);
      }
 
